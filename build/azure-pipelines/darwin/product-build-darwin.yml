@@ -43,6 +43,10 @@ steps:
     set -e
     pwd
     ls
+    cd ..
+    git clone https://github.com/microsoft/vscode-telemetry-extractor.git
+    pwd
+    ls
   displayName: Extract Telemetry
 
 # - script: |
