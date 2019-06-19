@@ -38,6 +38,7 @@ steps:
     node build/azure-pipelines/common/installDistroDependencies.js remote
     node build/lib/builtInExtensions.js
   displayName: Prepare build
+
 - script: |
     set -e
     pwd
