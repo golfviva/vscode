@@ -45,8 +45,11 @@ steps:
     ls
     cd ..
     git clone https://github.com/microsoft/vscode-telemetry-extractor.git
-    pwd
-    ls
+    cd vscode-telemetry-extractor
+    tsc
+    npm run setup-repos && npm run extract-all
+    mv declarations-resolved.json ../s/telemetry-core.json
+    mv declarations-extensions-resolved.json ../s/telemetry-extensions.json
   displayName: Extract Telemetry
 
 # - script: |
