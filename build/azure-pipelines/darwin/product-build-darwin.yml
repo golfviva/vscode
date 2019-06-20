@@ -49,10 +49,10 @@ steps:
     npm install
     ./node_modules/typescript/bin/tsc
     npm run setup-repos && npm run extract-all
-    mv declarations-resolved.json ../s/telemetry-core.json
-    mv declarations-extensions-resolved.json ../s/telemetry-extensions.json
+    mv declarations-resolved.json ../s/src/telemetry-core.json
+    mv declarations-extensions-resolved.json ../s/src/telemetry-extensions.json
     echo 'Moved Files'
-    cd s
+    cd ../s/src
     ls
   displayName: Extract Telemetry
 

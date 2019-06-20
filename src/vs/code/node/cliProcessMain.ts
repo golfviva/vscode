@@ -97,7 +97,7 @@ export class Main {
 			await this.locateExtension(ids);
 		} else if (argv['telemetry']) {
 			console.log(this.environmentService.appRoot);
-			console.log(buildTelemetryMessage(this.environmentService.extensionsPath));
+			console.log(buildTelemetryMessage(this.environmentService.appRoot, this.environmentService.extensionsPath));
 		}
 	}
 

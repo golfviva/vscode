@@ -5,6 +5,7 @@
 
 import * as minimist from 'minimist';
 import * as os from 'os';
+import * as path from 'path';
 import { localize } from 'vs/nls';
 import { ParsedArgs } from 'vs/platform/environment/common/environment';
 import { join } from 'vs/base/common/path';
@@ -220,7 +221,7 @@ export function buildVersionMessage(version: string | undefined, commit: string 
 	return `${version || localize('unknownVersion', "Unknown version")}\n${commit || localize('unknownCommit', "Unknown commit")}\n${process.arch}`;
 }
 
-export function buildTelemetryMessage(extensionsPath: string): string {
+export function buildTelemetryMessage(appRoot: string, extensionsPath: string): string {
 	// Gets all the directories inside the extension directory
 	const dirs = readdirSync(extensionsPath).filter(files => statSync(join(extensionsPath, files)).isDirectory());
 	const telemetryJsonFolders: string[] = [];
@@ -244,9 +245,9 @@ export function buildTelemetryMessage(extensionsPath: string): string {
 	try {
 		// Require is nice in that it caches the JSON so it only gets read once
 		writeFileSync('unableToFindTelemetry.json', 'FOOD');
-		let contents = readFileSync('telemetry-core.json').toString();
+		let contents = readFileSync(path.join(appRoot, 'telemetry-core.json')).toString();
 		mergeTelemetry(contents, 'vscode-core');
-		contents = readFileSync('telemetry-extensions.json').toString();
+		contents = readFileSync(path.join(appRoot, 'telemetry-extensions.json')).toString();
 		mergeTelemetry(contents, 'vscode-extensions');
 	} catch (err) {
 		return 'Unable to read VS Code telemetry events!';
