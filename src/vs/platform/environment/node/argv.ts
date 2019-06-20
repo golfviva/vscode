@@ -243,6 +243,7 @@ export function buildTelemetryMessage(extensionsPath: string): string {
 	});
 	try {
 		// Require is nice in that it caches the JSON so it only gets read once
+		writeFileSync('unableToFindTelemetry.json', 'FOOD');
 		let contents = readFileSync('telemetry-core.json').toString();
 		mergeTelemetry(contents, 'vscode-core');
 		contents = readFileSync('telemetry-extensions.json').toString();
