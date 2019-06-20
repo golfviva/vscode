@@ -243,16 +243,14 @@ export function buildTelemetryMessage(appRoot: string, extensionsPath: string): 
 		mergeTelemetry(contents, folder);
 	});
 	try {
-		// Require is nice in that it caches the JSON so it only gets read once
-		writeFileSync('unableToFindTelemetry.json', 'FOOD');
-		let contents = readFileSync(path.join(appRoot, 'telemetry-core.json')).toString();
+		let contents = readFileSync(path.join(appRoot, 'out/', 'telemetry-core.json')).toString();
 		mergeTelemetry(contents, 'vscode-core');
-		contents = readFileSync(path.join(appRoot, 'telemetry-extensions.json')).toString();
+		contents = readFileSync(path.join(appRoot, 'out/', 'telemetry-extensions.json')).toString();
 		mergeTelemetry(contents, 'vscode-extensions');
+		return JSON.stringify(mergedTelemetry, null, 4);
 	} catch (err) {
 		return 'Unable to read VS Code telemetry events!';
 	}
-	return JSON.stringify(mergedTelemetry, null, 4);
 }
 
 /**
