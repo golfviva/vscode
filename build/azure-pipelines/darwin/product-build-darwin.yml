@@ -52,8 +52,6 @@ steps:
     mv declarations-resolved.json ../s/src/telemetry-core.json
     mv declarations-extensions-resolved.json ../s/src/telemetry-extensions.json
     echo 'Moved Files'
-    cd ../s/src
-    ls
   displayName: Extract Telemetry
 
 - script: |
