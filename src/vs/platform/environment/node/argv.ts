@@ -221,7 +221,6 @@ export function buildVersionMessage(version: string | undefined, commit: string 
 }
 
 export function buildTelemetryMessage(extensionsPath: string): string {
-	// const contents = readFileSync('./telemetry.json');
 	// Gets all the directories inside the extension directory
 	const dirs = readdirSync(extensionsPath).filter(files => statSync(join(extensionsPath, files)).isDirectory());
 	const telemetryJsonFolders: string[] = [];
@@ -234,18 +233,26 @@ export function buildTelemetryMessage(extensionsPath: string): string {
 	});
 	const mergedTelemetry = Object.create(null);
 	// Simple function to merge the telemetry into one json object
-	const mergeTelemetry = (contents: string, dirName: string) => {
-		const telemetryData = JSON.parse(contents);
+	const mergeTelemetry = (contents: string | any, dirName: string) => {
+		let telemetryData = contents;
+		if (typeof contents === 'string') {
+			telemetryData = JSON.parse(contents);
+		}
 		mergedTelemetry[dirName] = telemetryData;
 	};
 	telemetryJsonFolders.forEach((folder) => {
 		const contents = readFileSync(join(extensionsPath, folder, 'telemetry.json')).toString();
 		mergeTelemetry(contents, folder);
 	});
-	let contents = readFileSync('./telemetry-core.json').toString();
-	mergeTelemetry(contents, 'vscode-core');
-	contents = readFileSync('./telemetry-extensions.json').toString();
-	mergeTelemetry(contents, 'vscode-extensions');
+	try {
+		// Require is nice in that it caches the JSON so it only gets read once
+		let contents = require('telemetry-core.json');
+		mergeTelemetry(contents, 'vscode-core');
+		contents = require('telemetry-extensions.json');
+		mergeTelemetry(contents, 'vscode-extensions');
+	} catch (err) {
+		return 'Unable to read VS Code telemetry events!';
+	}
 	return JSON.stringify(mergedTelemetry, null, 4);
 }
 
