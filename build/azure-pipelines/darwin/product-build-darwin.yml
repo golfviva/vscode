@@ -41,72 +41,72 @@ steps:
 
 - script: |
     set -e
-    pwd
-    ls
     cd ..
     git clone https://github.com/microsoft/vscode-telemetry-extractor.git
     cd vscode-telemetry-extractor
     npm install
     ./node_modules/typescript/bin/tsc
-    npm run setup-repos && npm run extract-all
+    ./setup-extension-repos.sh && cd ../..
+    node ./out/cli-extract.js --sourceDir ../s --excludedDirPattern extensions  --outputDir . --applyEndpoints --includeIsMeasurement --patchWebsiteEvents
+    node ./out/cli-extract-extensions.js --sourceDir ./src/telemetry-sources/ --outputDir . --applyEndpoints --includeIsMeasurement
     mv declarations-resolved.json ../s/src/telemetry-core.json
     mv declarations-extensions-resolved.json ../s/src/telemetry-extensions.json
     echo 'Moved Files'
   displayName: Extract Telemetry
 
-- script: |
-    set -e
-    VSCODE_MIXIN_PASSWORD="$(github-distro-mixin-password)" \
-    AZURE_STORAGE_ACCESS_KEY="$(ticino-storage-key)" \
-    ./build/azure-pipelines/darwin/build.sh
-  displayName: Build
+# - script: |
+#     set -e
+#     VSCODE_MIXIN_PASSWORD="$(github-distro-mixin-password)" \
+#     AZURE_STORAGE_ACCESS_KEY="$(ticino-storage-key)" \
+#     ./build/azure-pipelines/darwin/build.sh
+#   displayName: Build
 
-- script: |
-    set -e
-    ./scripts/test.sh --build --tfs "Unit Tests"
-    # APP_NAME="`ls $(agent.builddirectory)/VSCode-darwin | head -n 1`"
-    # yarn smoketest -- --build "$(agent.builddirectory)/VSCode-darwin/$APP_NAME"
-  displayName: Run unit tests
+# - script: |
+#     set -e
+#     ./scripts/test.sh --build --tfs "Unit Tests"
+#     # APP_NAME="`ls $(agent.builddirectory)/VSCode-darwin | head -n 1`"
+#     # yarn smoketest -- --build "$(agent.builddirectory)/VSCode-darwin/$APP_NAME"
+#   displayName: Run unit tests
 
-- script: |
-    set -e
-    ./scripts/test-integration.sh --build --tfs "Integration Tests"
-  displayName: Run integration tests
+# - script: |
+#     set -e
+#     ./scripts/test-integration.sh --build --tfs "Integration Tests"
+#   displayName: Run integration tests
 
-- script: |
-    set -e
-    pushd ../VSCode-darwin && zip -r -X -y ../VSCode-darwin.zip * && popd
-  displayName: Archive build
+# - script: |
+#     set -e
+#     pushd ../VSCode-darwin && zip -r -X -y ../VSCode-darwin.zip * && popd
+#   displayName: Archive build
 
-- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
-  inputs:
-    ConnectedServiceName: 'ESRP CodeSign'
-    FolderPath: '$(agent.builddirectory)'
-    Pattern: 'VSCode-darwin.zip'
-    signConfigType: inlineSignParams
-    inlineOperation: |
-      [
-        {
-          "keyCode": "CP-401337-Apple",
-          "operationSetCode": "MacAppDeveloperSign",
-          "parameters": [ ],
-          "toolName": "sign",
-          "toolVersion": "1.0"
-        }
-      ]
-    SessionTimeout: 120
-  displayName: Codesign
+# - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+#   inputs:
+#     ConnectedServiceName: 'ESRP CodeSign'
+#     FolderPath: '$(agent.builddirectory)'
+#     Pattern: 'VSCode-darwin.zip'
+#     signConfigType: inlineSignParams
+#     inlineOperation: |
+#       [
+#         {
+#           "keyCode": "CP-401337-Apple",
+#           "operationSetCode": "MacAppDeveloperSign",
+#           "parameters": [ ],
+#           "toolName": "sign",
+#           "toolVersion": "1.0"
+#         }
+#       ]
+#     SessionTimeout: 120
+#   displayName: Codesign
 
-- script: |
-    set -e
-    VSCODE_MIXIN_PASSWORD="$(github-distro-mixin-password)" \
-    AZURE_DOCUMENTDB_MASTERKEY="$(builds-docdb-key-readwrite)" \
-    AZURE_STORAGE_ACCESS_KEY="$(ticino-storage-key)" \
-    AZURE_STORAGE_ACCESS_KEY_2="$(vscode-storage-key)" \
-    VSCODE_HOCKEYAPP_TOKEN="$(vscode-hockeyapp-token)" \
-    ./build/azure-pipelines/darwin/publish.sh
-  displayName: Publish
+# - script: |
+#     set -e
+#     VSCODE_MIXIN_PASSWORD="$(github-distro-mixin-password)" \
+#     AZURE_DOCUMENTDB_MASTERKEY="$(builds-docdb-key-readwrite)" \
+#     AZURE_STORAGE_ACCESS_KEY="$(ticino-storage-key)" \
+#     AZURE_STORAGE_ACCESS_KEY_2="$(vscode-storage-key)" \
+#     VSCODE_HOCKEYAPP_TOKEN="$(vscode-hockeyapp-token)" \
+#     ./build/azure-pipelines/darwin/publish.sh
+#   displayName: Publish
 
-- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-  continueOnError: true
+# - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+#   displayName: 'Component Detection'
+#   continueOnError: true
