@@ -13,19 +13,19 @@ steps:
 #     azureSubscription: 'vscode-builds-subscription'
 #     KeyVaultName: vscode
 
-# - script: |
-#     set -e
+- script: |
+    set -e
 
-#     cat << EOF > ~/.netrc
-#     machine monacotools.visualstudio.com
-#     password $(devops-pat)
-#     machine github.com
-#     login vscode
-#     password $(github-distro-mixin-password)
-#     EOF
+    cat << EOF > ~/.netrc
+    machine monacotools.visualstudio.com
+    password $(devops-pat)
+    machine github.com
+    login vscode
+    password $(github-distro-mixin-password)
+    EOF
 
-#     git config user.email "vscode@microsoft.com"
-#     git config user.name "VSCode"
+    git config user.email "vscode@microsoft.com"
+    git config user.name "VSCode"
 #     git remote add distro "https://github.com/$(VSCODE_MIXIN_REPO).git"
 #     git fetch distro
 #     git merge $(node -p "require('./package.json').distro")
@@ -37,7 +37,7 @@ steps:
 #     node build/azure-pipelines/common/installDistroDependencies.js
 #     node build/azure-pipelines/common/installDistroDependencies.js remote
 #     node build/lib/builtInExtensions.js
-#   displayName: Prepare build
+  displayName: Prepare build
 
 - script: |
     set -e
