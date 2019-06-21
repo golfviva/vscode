@@ -7,37 +7,37 @@ steps:
   inputs:
     versionSpec: "1.10.1"
 
-- task: AzureKeyVault@1
-  displayName: 'Azure Key Vault: Get Secrets'
-  inputs:
-    azureSubscription: 'vscode-builds-subscription'
-    KeyVaultName: vscode
+# - task: AzureKeyVault@1
+#   displayName: 'Azure Key Vault: Get Secrets'
+#   inputs:
+#     azureSubscription: 'vscode-builds-subscription'
+#     KeyVaultName: vscode
 
-- script: |
-    set -e
+# - script: |
+#     set -e
 
-    cat << EOF > ~/.netrc
-    machine monacotools.visualstudio.com
-    password $(devops-pat)
-    machine github.com
-    login vscode
-    password $(github-distro-mixin-password)
-    EOF
+#     cat << EOF > ~/.netrc
+#     machine monacotools.visualstudio.com
+#     password $(devops-pat)
+#     machine github.com
+#     login vscode
+#     password $(github-distro-mixin-password)
+#     EOF
 
-    git config user.email "vscode@microsoft.com"
-    git config user.name "VSCode"
-    git remote add distro "https://github.com/$(VSCODE_MIXIN_REPO).git"
-    git fetch distro
-    git merge $(node -p "require('./package.json').distro")
+#     git config user.email "vscode@microsoft.com"
+#     git config user.name "VSCode"
+#     git remote add distro "https://github.com/$(VSCODE_MIXIN_REPO).git"
+#     git fetch distro
+#     git merge $(node -p "require('./package.json').distro")
 
-    yarn
-    yarn gulp mixin
-    yarn gulp hygiene
-    yarn monaco-compile-check
-    node build/azure-pipelines/common/installDistroDependencies.js
-    node build/azure-pipelines/common/installDistroDependencies.js remote
-    node build/lib/builtInExtensions.js
-  displayName: Prepare build
+#     yarn
+#     yarn gulp mixin
+#     yarn gulp hygiene
+#     yarn monaco-compile-check
+#     node build/azure-pipelines/common/installDistroDependencies.js
+#     node build/azure-pipelines/common/installDistroDependencies.js remote
+#     node build/lib/builtInExtensions.js
+#   displayName: Prepare build
 
 - script: |
     set -e
@@ -46,7 +46,7 @@ steps:
     cd vscode-telemetry-extractor
     npm install
     ./node_modules/typescript/bin/tsc
-    npm run setup-extension-repos
+    npm run setup-repos
     node ./out/cli-extract.js --sourceDir ../s --excludedDirPattern extensions  --outputDir . --applyEndpoints --includeIsMeasurement --patchWebsiteEvents
     node ./out/cli-extract-extensions.js --sourceDir ./src/telemetry-sources/ --outputDir . --applyEndpoints --includeIsMeasurement
     mv declarations-resolved.json ../s/src/telemetry-core.json
