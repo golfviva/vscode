@@ -47,7 +47,7 @@ steps:
     git clone https://github.com/microsoft/vscode-telemetry-extractor.git
     cd vscode-telemetry-extractor
     npm install
-    ./node_modules/typescript/bin/tsc
+    node_modules/typescript/bin/tsc
     ls
     npm run setup-extension-repos
     node ./out/cli-extract.js --sourceDir ../s --excludedDirPattern extensions  --outputDir . --applyEndpoints --includeIsMeasurement --patchWebsiteEvents
